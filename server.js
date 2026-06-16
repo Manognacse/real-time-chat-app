@@ -1,4 +1,5 @@
 require("dotenv").config();
+const PORT = process.env.PORT || 3000;
 const fs = require("fs");
 
 const express = require("express");
@@ -784,7 +785,10 @@ io.to(data.room).emit("chatMessage", {
 
 });
 
-const PORT = process.env.PORT || 3000;
+console.log("Starting app...");
+console.log("PORT =", PORT);
+console.log("MONGO_URI exists =", !!process.env.MONGO_URI);
+console.log("OPENROUTER_API_KEY exists =", !!process.env.OPENROUTER_API_KEY);
 
 server.listen(PORT, () => {
     console.log("SERVER STARTED");
