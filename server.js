@@ -48,6 +48,9 @@ const upload = multer({
 });
 
 const app = express();
+app.get("/", (req, res) => {
+    res.send("SERVER IS ALIVE");
+});
 try {
     if (!fs.existsSync("uploads")) {
         fs.mkdirSync("uploads");
@@ -795,7 +798,7 @@ console.log("PORT =", PORT);
 console.log("MONGO_URI exists =", !!process.env.MONGO_URI);
 console.log("OPENROUTER_API_KEY exists =", !!process.env.OPENROUTER_API_KEY);
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
     console.log("SERVER STARTED");
     console.log(`Server running on port ${PORT}`);
 });
