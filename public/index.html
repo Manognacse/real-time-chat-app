@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Pro Chat
+    </title>
+
+    <link
+    rel="stylesheet"
+    href="style.css">
+
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+
+<div id="authBox" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:
+linear-gradient(
+135deg,
+#0f172a,
+#1e1b4b,
+#312e81
+);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:99999;
+">
+
+    <div style="
+    background:rgba(255,255,255,.97);
+    backdrop-filter:blur(20px);
+    padding:50px;
+    border-radius:30px;
+    width:420px;
+    box-shadow:
+    0 25px 60px rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.3);
+    ">
+
+        <h2 style="
+        text-align:center;
+        font-size:42px;
+        margin-bottom:10px;
+        font-weight:800;
+        ">
+        🚀 Pro Chat
+        </h2>
+
+        <p style="
+        text-align:center;
+        color:#64748b;
+        margin-bottom:35px;
+        font-size:15px;
+        line-height:1.5;
+        ">
+        Real-Time Messaging • Secure Authentication • Private Conversations
+        </p>
+
+        <input
+        id="loginUsername"
+        placeholder="Username"
+        style="
+        width:100%;
+        padding:12px;
+        margin-bottom:12px;
+        border:1px solid #dbe2ea;
+        border-radius:15px;
+        font-size:15px;
+        box-sizing:border-box;
+
+        ">
+
+        <input
+        id="loginPassword"
+        type="password"
+        placeholder="Password"
+        style="
+        width:100%;
+        padding:12px;
+        margin-bottom:15px;
+        border:1px solid #dbe2ea;
+        border-radius:12px;
+        font-size:15px;
+        box-sizing:border-box;
+        ">
+
+        <button
+        onclick="registerUser()"
+        style="
+        width:100%;
+        padding:12px;
+        margin-bottom:12px;
+        border:none;
+        border-radius:12px;
+        background:#6366f1;
+        color:white;
+        font-size:15px;
+        font-weight:600;
+        cursor:pointer;
+
+        ">
+        Create Account
+        </button>
+
+        <button
+        onclick="loginUser()"
+        style="
+        width:100%;
+        padding:14px;
+        border:none;
+        border-radius:12px;
+        background:#0f172a;
+        color:white;
+        font-size:15px;
+        font-weight:600;
+        cursor:pointer;
+        ">
+        Sign In
+        </button>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+    <aside class="sidebar">
+
+        <h2>
+            🚀 Pro Chat
+        </h2>
+
+        <select id="room">
+
+            <option>
+                General
+            </option>
+
+            <option>
+                Coding
+            </option>
+
+            <option>
+                AI
+            </option>
+
+            <option>
+                Gaming
+            </option>
+
+        </select>
+
+        <h3>
+            Online Users
+        </h3>
+
+        <ul id="users"></ul>
+
+        <button
+        id="themeBtn"
+        onclick="toggleTheme()">
+
+            🌙 Toggle Theme
+
+        </button>
+        <button
+        id="muteBtn"
+        class="notify-btn"
+        onclick="toggleMute()">
+
+            <i class="fa-solid fa-bell"></i>
+            Notifications
+
+        </button>
+        <button
+        id="logoutBtn"
+        class="notify-btn"
+        onclick="logout()">
+
+        🚪 Logout
+
+        </button>
+        <div style="
+        margin-top:25px;
+        text-align:center;
+        font-size:12px;
+        opacity:.7;
+        ">
+        Powered by Socket.IO • MongoDB • JWT
+        </div>
+
+    </aside>
+
+    <main class="chat-area">
+
+        <div class="chat-header">
+
+            <div>
+
+                <h1>
+                    Pro Chat Workspace
+                </h1>
+
+                <div id="currentRoom">
+                    General Room
+                </div>
+
+                <div id="connectionStatus">
+                    🟢  Secure Connection
+                </div>
+
+            </div>
+
+            <span id="onlineCount">
+                Online: 0
+            </span>
+
+        </div>
+
+        <div class="join-box">
+
+            <input
+            id="username"
+            placeholder="Enter Username">
+            
+
+            <button
+            onclick="joinRoom()">
+
+                Join
+
+            </button>
+
+        </div>
+
+        <!-- SEARCH -->
+
+        <div
+        style="
+        padding:10px 20px;
+        ">
+
+            <input
+            id="searchBox"
+            placeholder="🔍 Search Messages..."
+            style="
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            font-size:15px;
+            ">
+
+        </div>
+
+        <div id="messages"></div>
+
+        <div id="typing"></div>
+
+        <div class="message-box">
+            <input
+            type="file"
+            id="fileInput"
+            accept="image/*,video/*,.pdf"
+            hidden>
+
+            <button
+            id="fileBtn"
+            onclick="document.getElementById('fileInput').click()">
+                📎
+            </button>
+
+            <button id="emojiBtn">
+                😊
+            </button>
+
+            <input
+            id="message"
+            placeholder="Type message...">
+
+            <button
+            onclick="sendMessage()">
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+            </button>
+
+            <emoji-picker
+            id="picker">
+            </emoji-picker>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script
+type="module"
+src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js">
+</script>
+<div id="reactionMenu" class="reaction-menu">
+
+    <span onclick="selectReaction('👍')">👍</span>
+
+    <span onclick="selectReaction('❤️')">❤️</span>
+
+    <span onclick="selectReaction('😂')">😂</span>
+
+    <span onclick="selectReaction('🔥')">🔥</span>
+
+    <span onclick="selectReaction('🎉')">🎉</span>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
