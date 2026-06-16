@@ -1,4 +1,11 @@
 console.log("=== SERVER FILE LOADED ===");
+process.on("uncaughtException", err => {
+    console.error("UNCAUGHT EXCEPTION:", err);
+});
+
+process.on("unhandledRejection", err => {
+    console.error("UNHANDLED REJECTION:", err);
+});
 require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 const fs = require("fs");
@@ -49,7 +56,8 @@ const upload = multer({
 
 const app = express();
 app.get("/", (req, res) => {
-    res.send("SERVER IS ALIVE");
+    console.log("ROOT ROUTE HIT");
+    res.status(200).send("SERVER IS ALIVE");
 });
 try {
     if (!fs.existsSync("uploads")) {
@@ -797,7 +805,10 @@ console.log("Starting app...");
 console.log("PORT =", PORT);
 console.log("MONGO_URI exists =", !!process.env.MONGO_URI);
 console.log("OPENROUTER_API_KEY exists =", !!process.env.OPENROUTER_API_KEY);
-
+app.use((err, req, res, next) => {
+    console.error("EXPRESS ERROR:", err);
+    res.status(500).send("Server Error");
+});
 server.listen(PORT, "0.0.0.0", () => {
     console.log("SERVER STARTED");
     console.log(`Server running on port ${PORT}`);
