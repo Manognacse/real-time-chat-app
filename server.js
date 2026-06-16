@@ -1,3 +1,4 @@
+console.log("=== SERVER FILE LOADED ===");
 require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 const fs = require("fs");
