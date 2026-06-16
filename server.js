@@ -11,7 +11,7 @@ const User = require("./models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("./middleware/auth");
-const { GoogleGenAI } = require("@google/genai");
+//const { GoogleGenAI } = require("@google/genai");
 const multer = require("multer");
 const axios = require("axios");
 
@@ -51,17 +51,20 @@ if (!fs.existsSync("uploads")) {
 }
 const server = http.createServer(app);
 const io = new Server(server);
-const genAI = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY
-});
-console.log("API KEY:", process.env.GEMINI_API_KEY);
-console.log(
-    "Gemini Key Loaded:",
-    process.env.GEMINI_API_KEY
-        ? "YES"
-        : "NO"
-);
-
+//const genAI = new GoogleGenAI({
+ //   apiKey: process.env.GEMINI_API_KEY
+//});
+//console.log("API KEY:", process.env.GEMINI_API_KEY);
+//console.log(
+  //  "Gemini Key Loaded:",
+    //process.env.GEMINI_API_KEY
+      //  ? "YES"
+        //: "NO"
+//);
+console.log("Starting app...");
+console.log("PORT =", process.env.PORT);
+console.log("MONGO_URI exists =", !!process.env.MONGO_URI);
+console.log("OPENROUTER_API_KEY exists =", !!process.env.OPENROUTER_API_KEY);
 mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 10000
 })
@@ -449,11 +452,11 @@ io.on("connection", socket => {
     try {
 
         const response = await axios.post(
-            "http://localhost:3000/ask-ai",
+            `http://127.0.0.1:${PORT}/ask-ai`,
             {
                 question: data.message.replace("@ai", "").trim()
             }
-        );
+);
 
         const aiMsg = new Message({
             username: "Gemini AI",
@@ -781,13 +784,9 @@ io.to(data.room).emit("chatMessage", {
 
 });
 
-server.listen(
-    3000,
-    () => {
+const PORT = process.env.PORT || 3000;
 
-        console.log(
-            "Server running on port 3000"
-        );
-
-    }
-);
+server.listen(PORT, () => {
+    console.log("SERVER STARTED");
+    console.log(`Server running on port ${PORT}`);
+});
