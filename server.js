@@ -47,8 +47,12 @@ const upload = multer({
 });
 
 const app = express();
-if (!fs.existsSync("uploads")) {
-    fs.mkdirSync("uploads");
+try {
+    if (!fs.existsSync("uploads")) {
+        fs.mkdirSync("uploads");
+    }
+} catch (err) {
+    console.log("UPLOAD FOLDER ERROR:", err);
 }
 const server = http.createServer(app);
 const io = new Server(server);
