@@ -23,31 +23,21 @@ const auth = require("./middleware/auth");
 //const { GoogleGenAI } = require("@google/genai");
 const multer = require("multer");
 const axios = require("axios");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const storage = multer.diskStorage({
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-    destination: (req, file, cb) => {
-
-        console.log(
-            "Upload folder:",
-            path.join(__dirname, "uploads")
-        );
-
-        cb(
-            null,
-            path.join(__dirname, "uploads")
-        );
-    },
-
-    filename: (req, file, cb) => {
-
-        cb(
-            null,
-            Date.now() + "-" + file.originalname
-        );
-
+const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: "chat-app-uploads",
+        resource_type: "auto"
     }
-
 });
 
 const upload = multer({
@@ -320,9 +310,7 @@ app.post(
         }
 
         res.json({
-            fileUrl:
-                "/uploads/" +
-                req.file.filename
+            fileUrl: req.file.path
         });
 
     }
