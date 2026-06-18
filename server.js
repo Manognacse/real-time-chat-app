@@ -55,9 +55,29 @@ const upload = multer({
 });
 
 const app = express();
+app.use(express.static("public"));
+
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended:true }));
+app.use((req, res, next) => {
+    console.log("REQUEST RECEIVED:", req.method, req.url);
+    next();
+});
 app.get("/", (req, res) => {
     console.log("ROOT ROUTE HIT");
     res.status(200).send("SERVER IS ALIVE");
+});
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok"
+    });
 });
 try {
     if (!fs.existsSync("uploads")) {
@@ -93,15 +113,7 @@ mongoose.connect(process.env.MONGO_URI, {
     console.log(err);
 });
 
-app.use(express.static("public"));
-app.use(
-    "/uploads",
-    express.static(
-        path.join(__dirname, "uploads")
-    )
-);
-app.use(express.json());
-app.use(express.urlencoded({ extended:true }));
+
 // REGISTER
 
 app.post(
