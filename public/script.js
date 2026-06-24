@@ -117,19 +117,28 @@ socket.on("offer", async data => {
 
         peerConnection.ontrack = event => {
 
-            const remoteAudio =
-            new Audio();
+    console.log("REMOTE AUDIO RECEIVED");
 
-            remoteAudio.srcObject =
-            event.streams[0];
+    let audio =
+    document.getElementById("remoteAudio");
 
-            remoteAudio.play();
+    if(!audio){
 
-            console.log(
-                "REMOTE AUDIO RECEIVED"
-            );
+        audio =
+        document.createElement("audio");
 
-        };
+        audio.id = "remoteAudio";
+
+        audio.autoplay = true;
+
+        document.body.appendChild(audio);
+
+    }
+
+    audio.srcObject =
+    event.streams[0];
+
+};
 
     }
 
