@@ -379,21 +379,31 @@ io.on("connection", socket => {
 
 socket.on("call-user", data => {
 
-    const targetUser = users.find(
-        u => u.username === data.targetId
-    );
+    console.log("========== CALL REQUEST ==========");
+    console.log("Caller:", data.callerName);
+    console.log("Target:", data.targetUser);
+    console.log("Online Users:", onlineUsers);
 
-    if(!targetUser){
-        return;
+    const targetSocketId =
+        onlineUsers[data.targetUser];
+
+    console.log("Target Socket:", targetSocketId);
+
+    if(targetSocketId){
+
+        io.to(targetSocketId).emit(
+            "incoming-call",
+            {
+                callerId: socket.id,
+                callerName: data.callerName
+            }
+        );
+
+    }else{
+
+        console.log("TARGET USER NOT FOUND");
+
     }
-
-    io.to(targetUser.id).emit(
-        "incoming-call",
-        {
-            callerId: socket.id,
-            callerName: data.callerName
-        }
-    );
 
 });
 
