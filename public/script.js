@@ -101,19 +101,19 @@ socket.on("offer", async data => {
 
         peerConnection.onicecandidate = event => {
 
-            if(event.candidate){
+    if(event.candidate){
 
-                socket.emit(
-                    "ice-candidate",
-                    {
-                        candidate:
-                        event.candidate
-                    }
-                );
-
+        socket.emit(
+            "ice-candidate",
+            {
+                targetId: data.callerId,
+                candidate: event.candidate
             }
+        );
 
-        };
+    }
+
+};
 
         peerConnection.ontrack = event => {
 
