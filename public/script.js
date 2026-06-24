@@ -91,7 +91,13 @@ data.callerId;
 
 });
 socket.on("offer", async data => {
+
     console.log("OFFER RECEIVED", data);
+
+    if(peerConnection.signalingState !== "stable"){
+        console.log("Ignoring duplicate offer");
+        return;
+    }
 
     await peerConnection.setRemoteDescription(
         new RTCSessionDescription(
@@ -117,7 +123,15 @@ socket.on("offer", async data => {
 });
 
 socket.on("answer", async data => {
+
     console.log("ANSWER RECEIVED", data);
+
+    if(
+        peerConnection.currentRemoteDescription
+    ){
+        console.log("Answer already set");
+        return;
+    }
 
     await peerConnection.setRemoteDescription(
         new RTCSessionDescription(
