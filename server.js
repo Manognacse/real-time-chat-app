@@ -373,6 +373,55 @@ io.on("connection", socket => {
 
     }
 );
+// ======================
+// WEBRTC SIGNALING
+// ======================
+
+socket.on("call-user", data => {
+
+    io.to(data.targetId).emit(
+        "incoming-call",
+        {
+            callerId: socket.id,
+            callerName: data.callerName
+        }
+    );
+
+});
+
+socket.on("offer", data => {
+
+    io.to(data.targetId).emit(
+        "offer",
+        {
+            offer: data.offer,
+            callerId: socket.id
+        }
+    );
+
+});
+
+socket.on("answer", data => {
+
+    io.to(data.targetId).emit(
+        "answer",
+        {
+            answer: data.answer
+        }
+    );
+
+});
+
+socket.on("ice-candidate", data => {
+
+    io.to(data.targetId).emit(
+        "ice-candidate",
+        {
+            candidate: data.candidate
+        }
+    );
+
+});
 
     socket.on(
         "joinRoom",
