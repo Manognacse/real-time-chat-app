@@ -407,16 +407,7 @@ socket.on("call-user", data => {
 
 socket.on("offer", data => {
 
-    const targetUser = users.find(
-        u => u.username === data.targetId
-    );
-
-    if(!targetUser){
-        console.log("TARGET USER NOT FOUND");
-        return;
-    }
-
-    io.to(targetUser.id).emit(
+    io.to(data.targetId).emit(
         "offer",
         {
             offer: data.offer,

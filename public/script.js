@@ -746,7 +746,7 @@ document
             return;
         }
 
-        currentTargetId = targetUser;
+        currentTargetId = null;
 
 localStream =
 await navigator.mediaDevices.getUserMedia({
@@ -772,7 +772,7 @@ socket.emit(
     "call-user",
     {
         callerName: username,
-        targetuser: targetUser
+        targetUser: targetUser
     }
 );
 console.log("SENDING OFFER");
