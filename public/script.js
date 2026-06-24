@@ -848,22 +848,9 @@ document
 
             let messageContent;
 
-if (
-    file.type.startsWith("image/")
-) {
+if (file.type.startsWith("image/")) {
 
-    messageContent = `
-        <a href="${data.fileUrl}" target="_blank">
-            <img
-                src="${data.fileUrl}"
-                style="
-                    max-width:200px;
-                    border-radius:10px;
-                    margin-top:10px;
-                "
-            >
-        </a>
-    `;
+    messageContent = `<img src="${data.fileUrl}" style="max-width:300px;border-radius:10px;">`;
 
 }
 else if (
