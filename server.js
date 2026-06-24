@@ -379,19 +379,17 @@ io.on("connection", socket => {
 
 socket.on("call-user", data => {
 
-    console.log("========== CALL REQUEST ==========");
-    console.log("Caller:", data.callerName);
-    console.log("Target:", data.targetUser);
-    console.log("Online Users:", onlineUsers);
+    console.log("CALL REQUEST");
 
-    const targetSocketId =
-        onlineUsers[data.targetUser];
+    const targetUser = users.find(
+        u => u.username === data.targetUser
+    );
 
-    console.log("Target Socket:", targetSocketId);
+    if(targetUser){
 
-    if(targetSocketId){
+        console.log("FOUND USER:", targetUser.username);
 
-        io.to(targetSocketId).emit(
+        io.to(targetUser.id).emit(
             "incoming-call",
             {
                 callerId: socket.id,

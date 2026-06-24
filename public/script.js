@@ -772,7 +772,7 @@ socket.emit(
     "call-user",
     {
         callerName: username,
-        targetId: targetUser
+        targetuser: targetUser
     }
 );
 console.log("SENDING OFFER");
