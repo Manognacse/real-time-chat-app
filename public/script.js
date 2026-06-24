@@ -91,6 +91,7 @@ data.callerId;
 
 });
 socket.on("offer", async data => {
+    console.log("OFFER RECEIVED", data);
 
     await peerConnection.setRemoteDescription(
         new RTCSessionDescription(
@@ -116,6 +117,7 @@ socket.on("offer", async data => {
 });
 
 socket.on("answer", async data => {
+    console.log("ANSWER RECEIVED", data);
 
     await peerConnection.setRemoteDescription(
         new RTCSessionDescription(
@@ -126,6 +128,7 @@ socket.on("answer", async data => {
 });
 
 socket.on("ice-candidate", async data => {
+    console.log("ICE RECEIVED", data);
 
     try{
 
@@ -714,7 +717,7 @@ socket.emit(
         targetId: targetUser
     }
 );
-
+console.log("SENDING OFFER");
 socket.emit(
     "offer",
     {
