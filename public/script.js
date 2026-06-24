@@ -1,4 +1,15 @@
 const socket = io();
+let peerConnection;
+let localStream;
+let currentTargetId;
+
+const rtcConfig = {
+    iceServers: [
+        {
+            urls: "stun:stun.l.google.com:19302"
+        }
+    ]
+};
 const notificationSound = new Audio("/sound.mp3");
 let notificationsEnabled =localStorage.getItem("notifications") !== "off";
 let username = "";
@@ -527,6 +538,31 @@ socket.on(
     }
 );
 let currentUsers = [];
+document
+.getElementById("voiceCallBtn")
+.addEventListener(
+    "click",
+    async () => {
+
+        const targetUser =
+        prompt(
+            "Enter username to call"
+        );
+
+        if(!targetUser){
+            return;
+        }
+
+        socket.emit(
+            "call-user",
+            {
+                callerName: username,
+                targetId: targetUser
+            }
+        );
+
+    }
+);
 
 function refreshUserList(){
 

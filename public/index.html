@@ -172,6 +172,22 @@ z-index:99999;
             Online Users
         </h3>
 
+        <button
+        id="voiceCallBtn"
+        style="
+        width:100%;
+        padding:12px;
+        margin-bottom:10px;
+        border:none;
+        border-radius:12px;
+        background:#22c55e;
+        color:white;
+        font-weight:bold;
+        cursor:pointer;
+        ">
+        📞 Voice Call
+        </button>
+
         <ul id="users"></ul>
 
         <button
@@ -332,7 +348,7 @@ src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js">
     <span onclick="selectReaction('🎉')">🎉</span>
 
 </div>
-
+<audio id="remoteAudio" autoplay></audio>
 <script src="script.js"></script>
 </body>
 </html>
