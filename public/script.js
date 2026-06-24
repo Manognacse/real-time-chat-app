@@ -11,16 +11,36 @@ const rtcConfig = {
         }
     ]
 };
-socket.on(
-    "incoming-call",
-    data => {
+socket.on("incoming-call", async (data) => {
 
-        alert(
-            data.callerName + " is calling you"
-        );
+    const accept = confirm(
+        `${data.callerName} is calling you`
+    );
+
+    if(!accept){
+        return;
+    }
+
+    alert("Call accepted");
+
+    try{
+
+        localStream =
+        await navigator.mediaDevices.getUserMedia({
+            audio:true
+        });
+
+        alert("Microphone connected");
+
+    }catch(err){
+
+        console.log(err);
+
+        alert("Microphone permission denied");
 
     }
-);
+
+});
 const notificationSound = new Audio("/sound.mp3");
 let notificationsEnabled =localStorage.getItem("notifications") !== "off";
 let username = "";
