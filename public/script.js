@@ -94,9 +94,43 @@ socket.on("offer", async data => {
 
     console.log("OFFER RECEIVED", data);
 
-    if(peerConnection.signalingState !== "stable"){
-        console.log("Ignoring duplicate offer");
-        return;
+    if(!peerConnection){
+
+        peerConnection =
+        new RTCPeerConnection(rtcConfig);
+
+        peerConnection.onicecandidate = event => {
+
+            if(event.candidate){
+
+                socket.emit(
+                    "ice-candidate",
+                    {
+                        candidate:
+                        event.candidate
+                    }
+                );
+
+            }
+
+        };
+
+        peerConnection.ontrack = event => {
+
+            const remoteAudio =
+            new Audio();
+
+            remoteAudio.srcObject =
+            event.streams[0];
+
+            remoteAudio.play();
+
+            console.log(
+                "REMOTE AUDIO RECEIVED"
+            );
+
+        };
+
     }
 
     await peerConnection.setRemoteDescription(
@@ -115,7 +149,8 @@ socket.on("offer", async data => {
     socket.emit(
         "answer",
         {
-            targetId: data.callerId,
+            targetId:
+            data.callerId,
             answer
         }
     );
