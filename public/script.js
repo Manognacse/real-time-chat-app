@@ -2,6 +2,11 @@ const socket = io();
 let peerConnection;
 let localStream;
 let currentTargetId;
+const remoteAudio = document.createElement("audio");
+
+remoteAudio.autoplay = true;
+
+document.body.appendChild(remoteAudio);
 
 const rtcConfig = {
     
@@ -11,6 +16,37 @@ const rtcConfig = {
         }
     ]
 };
+async function createPeerConnection(){
+
+    peerConnection =
+    new RTCPeerConnection(rtcConfig);
+
+    peerConnection.ontrack = event => {
+
+        remoteAudio.srcObject =
+        event.streams[0];
+
+        console.log("REMOTE AUDIO RECEIVED");
+
+    };
+
+    peerConnection.onicecandidate = event => {
+
+        if(event.candidate){
+
+            socket.emit(
+                "ice-candidate",
+                {
+                    targetId: currentTargetId,
+                    candidate: event.candidate
+                }
+            );
+
+        }
+
+    };
+
+}
 socket.on("incoming-call", async (data) => {
 
     console.log("CALL RECEIVED", data);
@@ -33,7 +69,17 @@ socket.on("incoming-call", async (data) => {
         });
 
         console.log("MICROPHONE OK");
+        await createPeerConnection();
 
+localStream.getTracks().forEach(track => {
+    peerConnection.addTrack(
+        track,
+        localStream
+    );
+});
+
+currentTargetId =
+data.callerId;
         alert("Microphone Connected");
 
     }catch(err){
@@ -41,6 +87,58 @@ socket.on("incoming-call", async (data) => {
         console.log("MIC ERROR", err);
 
         alert("Microphone Failed");
+    }
+
+});
+socket.on("offer", async data => {
+
+    await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(
+            data.offer
+        )
+    );
+
+    const answer =
+    await peerConnection.createAnswer();
+
+    await peerConnection.setLocalDescription(
+        answer
+    );
+
+    socket.emit(
+        "answer",
+        {
+            targetId: data.callerId,
+            answer
+        }
+    );
+
+});
+
+socket.on("answer", async data => {
+
+    await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(
+            data.answer
+        )
+    );
+
+});
+
+socket.on("ice-candidate", async data => {
+
+    try{
+
+        await peerConnection.addIceCandidate(
+            new RTCIceCandidate(
+                data.candidate
+            )
+        );
+
+    }catch(err){
+
+        console.log(err);
+
     }
 
 });
@@ -587,13 +685,43 @@ document
             return;
         }
 
-        socket.emit(
-            "call-user",
-            {
-                callerName: username,
-                targetId: targetUser
-            }
-        );
+        currentTargetId = targetUser;
+
+localStream =
+await navigator.mediaDevices.getUserMedia({
+    audio:true
+});
+
+await createPeerConnection();
+
+localStream.getTracks().forEach(track => {
+    peerConnection.addTrack(
+        track,
+        localStream
+    );
+});
+const offer =
+await peerConnection.createOffer();
+
+await peerConnection.setLocalDescription(
+    offer
+);
+
+socket.emit(
+    "call-user",
+    {
+        callerName: username,
+        targetId: targetUser
+    }
+);
+
+socket.emit(
+    "offer",
+    {
+        targetId: targetUser,
+        offer
+    }
+);
 
     }
 );
