@@ -379,7 +379,15 @@ io.on("connection", socket => {
 
 socket.on("call-user", data => {
 
-    io.to(data.targetId).emit(
+    const targetUser = users.find(
+        u => u.username === data.targetId
+    );
+
+    if(!targetUser){
+        return;
+    }
+
+    io.to(targetUser.id).emit(
         "incoming-call",
         {
             callerId: socket.id,

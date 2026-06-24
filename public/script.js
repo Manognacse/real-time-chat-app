@@ -4,12 +4,23 @@ let localStream;
 let currentTargetId;
 
 const rtcConfig = {
+    
     iceServers: [
         {
             urls: "stun:stun.l.google.com:19302"
         }
     ]
 };
+socket.on(
+    "incoming-call",
+    data => {
+
+        alert(
+            data.callerName + " is calling you"
+        );
+
+    }
+);
 const notificationSound = new Audio("/sound.mp3");
 let notificationsEnabled =localStorage.getItem("notifications") !== "off";
 let username = "";
