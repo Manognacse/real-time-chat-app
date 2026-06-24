@@ -13,6 +13,8 @@ const rtcConfig = {
 };
 socket.on("incoming-call", async (data) => {
 
+    console.log("CALL RECEIVED", data);
+
     const accept = confirm(
         `${data.callerName} is calling you`
     );
@@ -21,7 +23,7 @@ socket.on("incoming-call", async (data) => {
         return;
     }
 
-    alert("Call accepted");
+    console.log("CALL ACCEPTED");
 
     try{
 
@@ -30,14 +32,15 @@ socket.on("incoming-call", async (data) => {
             audio:true
         });
 
-        alert("Microphone connected");
+        console.log("MICROPHONE OK");
+
+        alert("Microphone Connected");
 
     }catch(err){
 
-        console.log(err);
+        console.log("MIC ERROR", err);
 
-        alert("Microphone permission denied");
-
+        alert("Microphone Failed");
     }
 
 });
