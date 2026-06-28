@@ -2,11 +2,8 @@ const socket = io();
 let peerConnection;
 let localStream;
 let currentTargetId;
-const remoteAudio = document.createElement("audio");
-
-remoteAudio.autoplay = true;
-
-document.body.appendChild(remoteAudio);
+const remoteAudio =
+document.getElementById("remoteAudio");
 
 const rtcConfig = {
     
@@ -58,8 +55,8 @@ socket.on("incoming-call", async (data) => {
     if(!accept){
         return;
     }
-
     console.log("CALL ACCEPTED");
+
     document.getElementById("endCallBtn").style.display = "flex";
     try{
 
@@ -96,57 +93,33 @@ socket.on("offer", async data => {
 
     if(!peerConnection){
 
-        peerConnection =
-        new RTCPeerConnection(rtcConfig);
+    await createPeerConnection();
 
-        peerConnection.onicecandidate = event => {
+}
+if(localStream){
 
-    if(event.candidate){
+    localStream.getTracks().forEach(track => {
 
-        socket.emit(
-            "ice-candidate",
-            {
-                targetId: data.callerId,
-                candidate: event.candidate
-            }
+        peerConnection.addTrack(
+            track,
+            localStream
         );
 
-    }
+    });
 
-};
+}
 
-        peerConnection.ontrack = event => {
+    if (
+    peerConnection.currentRemoteDescription
+){
+    return;
+}
 
-    console.log("REMOTE AUDIO RECEIVED");
-
-    let audio =
-    document.getElementById("remoteAudio");
-
-    if(!audio){
-
-        audio =
-        document.createElement("audio");
-
-        audio.id = "remoteAudio";
-
-        audio.autoplay = true;
-
-        document.body.appendChild(audio);
-
-    }
-
-    audio.srcObject =
-    event.streams[0];
-
-};
-
-    }
-
-    await peerConnection.setRemoteDescription(
-        new RTCSessionDescription(
-            data.offer
-        )
-    );
+await peerConnection.setRemoteDescription(
+    new RTCSessionDescription(
+        data.offer
+    )
+);
 
     const answer =
     await peerConnection.createAnswer();
@@ -185,7 +158,22 @@ socket.on("answer", async data => {
     );
 
 });
+socket.on("call-accepted", async (data) => {
 
+    currentTargetId = data.targetId;
+
+    document.getElementById("endCallBtn").style.display = "flex";
+
+    const offer = await peerConnection.createOffer();
+
+    await peerConnection.setLocalDescription(offer);
+
+    socket.emit("offer", {
+        targetId: currentTargetId,
+        offer
+    });
+
+});
 socket.on("ice-candidate", async data => {
     console.log("ICE RECEIVED", data);
 
@@ -218,6 +206,7 @@ socket.on("call-ended", () => {
     }
 
     remoteAudio.srcObject = null;
+    currentTargetId = null;
 
     document.getElementById("endCallBtn").style.display = "none";
 
@@ -782,13 +771,6 @@ localStream.getTracks().forEach(track => {
         localStream
     );
 });
-const offer =
-await peerConnection.createOffer();
-
-await peerConnection.setLocalDescription(
-    offer
-);
-
 socket.emit(
     "call-user",
     {
@@ -796,20 +778,7 @@ socket.emit(
         targetUser: targetUser
     }
 );
-socket.on("call-accepted", async (data) => {
 
-    currentTargetId = data.targetId;
-
-    const offer = await peerConnection.createOffer();
-
-    await peerConnection.setLocalDescription(offer);
-
-    socket.emit("offer", {
-        targetId: currentTargetId,
-        offer
-    });
-
-});
 
     }
 );
