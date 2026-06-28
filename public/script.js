@@ -203,6 +203,23 @@ socket.on("ice-candidate", async data => {
     }
 
 });
+socket.on("call-ended", () => {
+
+    if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+    }
+
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+
+    remoteAudio.srcObject = null;
+
+    alert("The other user ended the call");
+
+});
 const notificationSound = new Audio("/sound.mp3");
 let notificationsEnabled =localStorage.getItem("notifications") !== "off";
 let username = "";
@@ -775,14 +792,20 @@ socket.emit(
         targetUser: targetUser
     }
 );
-console.log("SENDING OFFER");
-socket.emit(
-    "offer",
-    {
-        targetId: targetUser,
+socket.on("call-accepted", async (data) => {
+
+    currentTargetId = data.targetId;
+
+    const offer = await peerConnection.createOffer();
+
+    await peerConnection.setLocalDescription(offer);
+
+    socket.emit("offer", {
+        targetId: currentTargetId,
         offer
-    }
-);
+    });
+
+});
 
     }
 );
@@ -1481,3 +1504,24 @@ function logout(){
     location.reload();
 
 }
+document.getElementById("endCallBtn").addEventListener("click", () => {
+
+    socket.emit("end-call", {
+        targetId: currentTargetId
+    });
+
+    if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+    }
+
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+
+    remoteAudio.srcObject = null;
+
+    alert("Call Ended");
+
+});

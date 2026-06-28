@@ -385,23 +385,23 @@ socket.on("call-user", data => {
         u => u.username === data.targetUser
     );
 
-    if(targetUser){
-
-        console.log("FOUND USER:", targetUser.username);
-
-        io.to(targetUser.id).emit(
-            "incoming-call",
-            {
-                callerId: socket.id,
-                callerName: data.callerName
-            }
-        );
-
-    }else{
-
+    if(!targetUser){
         console.log("TARGET USER NOT FOUND");
-
+        return;
     }
+
+    console.log("FOUND USER:", targetUser.username);
+
+    // Notify receiver
+    io.to(targetUser.id).emit("incoming-call", {
+        callerId: socket.id,
+        callerName: data.callerName
+    });
+
+    // Notify caller with receiver socket id
+    io.to(socket.id).emit("call-accepted", {
+        targetId: targetUser.id
+    });
 
 });
 
@@ -443,6 +443,13 @@ socket.on("ice-candidate", data => {
         {
             candidate: data.candidate
         }
+    );
+
+});
+socket.on("end-call", data => {
+
+    io.to(data.targetId).emit(
+        "call-ended"
     );
 
 });
