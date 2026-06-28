@@ -1126,6 +1126,68 @@ body{
 
     opacity:1;
 }
+/* Professional End Call Button */
+
+.end-call-btn{
+
+    width:100%;
+    margin-bottom:15px;
+    padding:12px;
+
+    border:none;
+    border-radius:14px;
+
+    background:linear-gradient(
+        135deg,
+        #ef4444,
+        #dc2626
+    );
+
+    color:#fff;
+
+    font-size:15px;
+    font-weight:700;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+    cursor:pointer;
+
+    transition:.25s ease;
+
+    box-shadow:
+    0 8px 18px rgba(220,38,38,.35);
+
+}
+
+.end-call-btn:hover{
+
+    transform:translateY(-2px);
+
+    background:linear-gradient(
+        135deg,
+        #dc2626,
+        #b91c1c
+    );
+
+    box-shadow:
+    0 12px 24px rgba(220,38,38,.45);
+
+}
+
+.end-call-btn:active{
+
+    transform:scale(.97);
+
+}
+
+.end-call-btn i{
+
+    font-size:16px;
+
+}
 
 /* Mobile */
 

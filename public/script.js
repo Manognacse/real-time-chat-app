@@ -60,7 +60,7 @@ socket.on("incoming-call", async (data) => {
     }
 
     console.log("CALL ACCEPTED");
-
+    document.getElementById("endCallBtn").style.display = "flex";
     try{
 
         localStream =
@@ -169,6 +169,7 @@ socket.on("offer", async data => {
 socket.on("answer", async data => {
 
     console.log("ANSWER RECEIVED", data);
+    document.getElementById("endCallBtn").style.display = "flex";
 
     if(
         peerConnection.currentRemoteDescription
@@ -203,6 +204,7 @@ socket.on("ice-candidate", async data => {
     }
 
 });
+
 socket.on("call-ended", () => {
 
     if (peerConnection) {
@@ -216,6 +218,8 @@ socket.on("call-ended", () => {
     }
 
     remoteAudio.srcObject = null;
+
+    document.getElementById("endCallBtn").style.display = "none";
 
     alert("The other user ended the call");
 
@@ -1521,6 +1525,8 @@ document.getElementById("endCallBtn").addEventListener("click", () => {
     }
 
     remoteAudio.srcObject = null;
+
+    document.getElementById("endCallBtn").style.display = "none";
 
     alert("Call Ended");
 
